@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use error::prelude::*;
-use messages::get_message::Message;
+use agency_vcx::get_message::Message;
 use aries::handlers::connection::agent_info::AgentInfo;
 use aries::handlers::connection::invitee::state_machine::{InviteeState, SmConnectionInvitee};
 use aries::handlers::connection::inviter::state_machine::{InviterState, SmConnectionInviter};
@@ -355,7 +355,7 @@ impl Connection {
     pub fn decode_message(&self, message: &Message) -> VcxResult<A2AMessage> {
         match message.decrypted_payload {
             Some(ref payload) => {
-                let message: ::messages::payload::PayloadV1 = ::serde_json::from_str(&payload)
+                let message: ::agency_vcx::payload::PayloadV1 = ::serde_json::from_str(&payload)
                     .map_err(|err| VcxError::from_msg(VcxErrorKind::InvalidJson, format!("Cannot deserialize message: {}", err)))?;
 
                 ::serde_json::from_str::<A2AMessage>(&message.msg)

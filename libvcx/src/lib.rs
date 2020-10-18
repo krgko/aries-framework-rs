@@ -34,7 +34,7 @@ extern crate uuid;
 pub mod utils;
 pub mod settings;
 #[macro_use]
-pub mod messages;
+pub mod agency_vcx;
 
 pub mod api;
 pub mod connection;

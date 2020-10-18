@@ -56,7 +56,7 @@ pub type PresentationRequestData = ProofRequestData;
 
 #[cfg(test)]
 pub mod tests {
-    use messages::thread::Thread;
+    use agency_vcx::thread::Thread;
     use aries::messages::connection::service::tests::_service;
 
     use super::*;

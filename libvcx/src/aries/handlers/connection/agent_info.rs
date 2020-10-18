@@ -2,10 +2,10 @@ use std::collections::HashMap;
 
 use connection::create_agent_keys;
 use error::prelude::*;
-use messages::get_message::{get_connection_messages, Message};
-use messages::MessageStatusCode;
-use messages::update_connection::send_delete_connection_message;
-use messages::update_message::{UIDsByConn, update_messages as update_messages_status};
+use agency_vcx::get_message::{get_connection_messages, Message};
+use agency_vcx::MessageStatusCode;
+use agency_vcx::update_connection::send_delete_connection_message;
+use agency_vcx::update_message::{UIDsByConn, update_messages as update_messages_status};
 use settings;
 use settings::ProtocolTypes;
 use utils::httpclient;

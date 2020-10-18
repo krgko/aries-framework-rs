@@ -5,7 +5,7 @@ use serde_json;
 
 use aries::messages::connection::service::Service;
 use error::prelude::*;
-use messages::validation;
+use agency_vcx::validation;
 use utils::libindy::anoncreds;
 use utils::qualifier;
 
@@ -207,7 +207,7 @@ impl Default for ProofRequestVersion {
 
 #[cfg(test)]
 mod tests {
-    use messages::proof_request;
+    use agency_vcx::proof_request;
     use utils::constants::{REQUESTED_ATTRS, REQUESTED_PREDICATES};
     use utils::devsetup::SetupDefaults;
 

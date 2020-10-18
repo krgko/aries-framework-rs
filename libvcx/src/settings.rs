@@ -12,7 +12,7 @@ use strum::IntoEnumIterator;
 use url::Url;
 
 use error::prelude::*;
-use messages::validation;
+use agency_vcx::validation;
 use utils::{error, get_temp_dir_path};
 use utils::file::read_file;
 

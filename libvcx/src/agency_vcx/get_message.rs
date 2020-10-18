@@ -1,7 +1,7 @@
 use error::{VcxError, VcxErrorKind, VcxResult};
-use messages::{A2AMessage, A2AMessageKinds, A2AMessageV2, GeneralMessage, get_messages, MessageStatusCode, parse_response_from_agency, prepare_message_for_agency, prepare_message_for_agent, RemoteMessageType};
-use messages::message_type::MessageTypes;
-use messages::payload::Payloads;
+use agency_vcx::{A2AMessage, A2AMessageKinds, A2AMessageV2, GeneralMessage, get_messages, MessageStatusCode, parse_response_from_agency, prepare_message_for_agency, prepare_message_for_agent, RemoteMessageType};
+use agency_vcx::message_type::MessageTypes;
+use agency_vcx::payload::Payloads;
 use settings;
 use settings::ProtocolTypes;
 use utils::{constants, httpclient};
@@ -315,10 +315,10 @@ impl Message {
         new_message
     }
 
-    fn _decrypt_v3_message(&self) -> VcxResult<::messages::payload::PayloadV1> {
+    fn _decrypt_v3_message(&self) -> VcxResult<::agency_vcx::payload::PayloadV1> {
         use aries::messages::a2a::A2AMessage;
         use aries::utils::encryption_envelope::EncryptionEnvelope;
-        use ::messages::payload::{PayloadTypes, PayloadV1, PayloadKinds};
+        use ::agency_vcx::payload::{PayloadTypes, PayloadV1, PayloadKinds};
 
         let a2a_message = EncryptionEnvelope::open(self.payload()?)?;
 

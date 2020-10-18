@@ -8,9 +8,9 @@ use aries::messages::a2a::A2AMessage;
 use aries::messages::connection::did_doc::DidDoc;
 use aries::messages::connection::invite::Invitation as InvitationV3;
 use error::prelude::*;
-use messages;
-use messages::get_message::Message;
-use messages::SerializableObjectWithState;
+use agency_vcx;
+use agency_vcx::get_message::Message;
+use agency_vcx::SerializableObjectWithState;
 use settings;
 use settings::ProtocolTypes;
 use utils::error;
@@ -23,7 +23,7 @@ lazy_static! {
 pub fn create_agent_keys(source_id: &str, pw_did: &str, pw_verkey: &str) -> VcxResult<(String, String)> {
     debug!("creating pairwise keys on agent for connection {}", source_id);
 
-    let (agent_did, agent_verkey) = messages::create_keys()
+    let (agent_did, agent_verkey) = agency_vcx::create_keys()
         .for_did(pw_did)?
         .for_verkey(pw_verkey)?
         .version(&Some(settings::get_protocol_type()))?
@@ -267,8 +267,8 @@ pub mod tests {
     use serde_json::Value;
 
     use api::VcxStateType;
-    use messages::get_message::download_messages;
-    use messages::MessageStatusCode;
+    use agency_vcx::get_message::download_messages;
+    use agency_vcx::MessageStatusCode;
     use utils::constants::*;
     use utils::constants;
     use utils::devsetup::*;

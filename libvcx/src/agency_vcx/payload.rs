@@ -1,9 +1,9 @@
 use serde_json::Value;
 
 use error::{VcxError, VcxErrorKind, VcxResult};
-use messages::get_message::MessagePayload;
-use messages::message_type::*;
-use messages::thread::Thread;
+use agency_vcx::get_message::MessagePayload;
+use agency_vcx::message_type::*;
+use agency_vcx::thread::Thread;
 use settings::{get_protocol_type, ProtocolTypes};
 use utils::libindy::crypto;
 

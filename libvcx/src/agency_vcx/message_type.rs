@@ -3,7 +3,7 @@ use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 use serde_json::Value;
 
 use error::prelude::*;
-use messages::A2AMessageKinds;
+use agency_vcx::A2AMessageKinds;
 use settings;
 
 pub const MESSAGE_VERSION_V1: &str = "1.0";

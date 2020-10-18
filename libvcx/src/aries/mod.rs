@@ -11,8 +11,8 @@ pub mod test {
     use rand;
     use rand::Rng;
 
-    use messages::agent_utils::connect_register_provision;
-    use messages::payload::PayloadV1;
+    use agency_vcx::agent_utils::connect_register_provision;
+    use agency_vcx::payload::PayloadV1;
     use utils::devsetup::*;
     use utils::libindy::wallet::*;
     use utils::plugins::init_plugin;
@@ -113,7 +113,7 @@ pub mod test {
     }
 
     fn download_message(did: String, type_: &str) -> Message {
-        let mut messages = ::messages::get_message::download_messages(Some(vec![did]), Some(vec![String::from("MS-103")]), None).unwrap();
+        let mut messages = ::agency_vcx::get_message::download_messages(Some(vec![did]), Some(vec![String::from("MS-103")]), None).unwrap();
         assert_eq!(1, messages.len());
         let messages = messages.pop().unwrap();
 
