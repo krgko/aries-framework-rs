@@ -1,7 +1,7 @@
-use error::{VcxError, VcxErrorKind, VcxResult};
 use agency_vcx::{A2AMessage, A2AMessageKinds, A2AMessageV2, GeneralMessage, get_messages, MessageStatusCode, parse_response_from_agency, prepare_message_for_agency, prepare_message_for_agent, RemoteMessageType};
 use agency_vcx::message_type::MessageTypes;
 use agency_vcx::payload::Payloads;
+use error::{VcxError, VcxErrorKind, VcxResult};
 use settings;
 use settings::ProtocolTypes;
 use utils::{constants, httpclient};
@@ -143,7 +143,7 @@ impl GetMessagesBuilder {
     fn parse_response(&self, response: Vec<u8>) -> VcxResult<Vec<Message>> {
         trace!("parse_get_messages_response >>> response: {:?}", response);
 
-        let mut response = parse_response_from_agency(&response, &self.version)?;
+        let mut response = parse_response_from_agency(&response)?;
 
         trace!("parse_get_messages_response >>> obtained agency response {:?}", response);
 
@@ -173,29 +173,23 @@ impl GetMessagesBuilder {
     }
 
     fn prepare_download_request(&self) -> VcxResult<Vec<u8>> {
-        let message = match self.version {
-            settings::ProtocolTypes::V1 |
-            settings::ProtocolTypes::V2 |
-            settings::ProtocolTypes::V3 |
-            settings::ProtocolTypes::V4 =>
-                A2AMessage::Version2(
-                    A2AMessageV2::GetMessages(
-                        GetMessages::build(A2AMessageKinds::GetMessagesByConnections,
-                                           self.exclude_payload.clone(),
-                                           self.uids.clone(),
-                                           self.status_codes.clone(),
-                                           self.pairwise_dids.clone()))
-                ),
-        };
+        let message = A2AMessage::Version2(
+            A2AMessageV2::GetMessages(
+                GetMessages::build(A2AMessageKinds::GetMessagesByConnections,
+                                   self.exclude_payload.clone(),
+                                   self.uids.clone(),
+                                   self.status_codes.clone(),
+                                   self.pairwise_dids.clone()))
+        );
 
         let agency_did = settings::get_config_value(settings::CONFIG_REMOTE_TO_SDK_DID)?;
 
-        prepare_message_for_agency(&message, &agency_did, &self.version)
+        prepare_message_for_agency(&message, &agency_did)
     }
 
     fn parse_download_messages_response(&self, response: Vec<u8>) -> VcxResult<Vec<MessageByConnection>> {
         trace!("parse_download_messages_response >>>");
-        let mut response = parse_response_from_agency(&response, &self.version)?;
+        let mut response = parse_response_from_agency(&response)?;
 
         trace!("parse_download_messages_response: parsed response {:?}", response);
         let msgs = match response.remove(0) {
@@ -227,22 +221,16 @@ impl GeneralMessage for GetMessagesBuilder {
 
     fn prepare_request(&mut self) -> VcxResult<Vec<u8>> {
         debug!("prepare_request >> This connection is using protocol_type: {:?}", self.version);
-        let message = match self.version {
-            settings::ProtocolTypes::V1 |
-            settings::ProtocolTypes::V2 |
-            settings::ProtocolTypes::V3 |
-            settings::ProtocolTypes::V4 =>
-                A2AMessage::Version2(
-                    A2AMessageV2::GetMessages(
-                        GetMessages::build(A2AMessageKinds::GetMessages,
-                                           self.exclude_payload.clone(),
-                                           self.uids.clone(),
-                                           self.status_codes.clone(),
-                                           self.pairwise_dids.clone()))
-                ),
-        };
+        let message = A2AMessage::Version2(
+            A2AMessageV2::GetMessages(
+                GetMessages::build(A2AMessageKinds::GetMessages,
+                                   self.exclude_payload.clone(),
+                                   self.uids.clone(),
+                                   self.status_codes.clone(),
+                                   self.pairwise_dids.clone()))
+        );
 
-        prepare_message_for_agent(vec![message], &self.to_vk, &self.agent_did, &self.agent_vk, &self.version)
+        prepare_message_for_agent(vec![message], &self.to_vk, &self.agent_did, &self.agent_vk)
     }
 }
 

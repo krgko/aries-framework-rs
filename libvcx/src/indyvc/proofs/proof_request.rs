@@ -5,7 +5,7 @@ use serde_json;
 
 use aries::messages::connection::service::Service;
 use error::prelude::*;
-use agency_vcx::validation;
+use utils::validation;
 use utils::libindy::anoncreds;
 use utils::qualifier;
 

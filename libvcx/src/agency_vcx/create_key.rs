@@ -1,9 +1,9 @@
-use error::prelude::*;
-use agency_vcx::{A2AMessage, A2AMessageKinds, A2AMessageV2, parse_response_from_agency, prepare_message_for_agency, validation};
+use agency_vcx::{A2AMessage, A2AMessageKinds, A2AMessageV2, parse_response_from_agency, prepare_message_for_agency};
 use agency_vcx::message_type::MessageTypes;
+use error::prelude::*;
 use settings;
 use settings::ProtocolTypes;
-use utils::{constants, httpclient};
+use utils::{constants, httpclient, validation};
 use utils::httpclient::AgencyMock;
 
 #[derive(Deserialize, Serialize, Debug, PartialEq)]
@@ -69,12 +69,7 @@ impl CreateKeyBuilder {
         trace!("CreateKeyMsg::send >>>");
 
         if settings::agency_mocks_enabled() {
-            match self.version {
-                settings::ProtocolTypes::V1 |
-                settings::ProtocolTypes::V2 |
-                settings::ProtocolTypes::V3 |
-                settings::ProtocolTypes::V4 => AgencyMock::set_next_response(constants::CREATE_KEYS_V2_RESPONSE.to_vec()),
-            }
+            AgencyMock::set_next_response(constants::CREATE_KEYS_V2_RESPONSE.to_vec());
         }
 
         let data = self.prepare_request()?;
@@ -85,27 +80,21 @@ impl CreateKeyBuilder {
     }
 
     fn prepare_request(&self) -> VcxResult<Vec<u8>> {
-        let message = match self.version {
-            settings::ProtocolTypes::V1 |
-            settings::ProtocolTypes::V2 |
-            settings::ProtocolTypes::V3 |
-            settings::ProtocolTypes::V4 =>
-                A2AMessage::Version2(
-                    A2AMessageV2::CreateKey(CreateKey {
-                        msg_type: MessageTypes::MessageTypeV2(MessageTypes::build_v2(A2AMessageKinds::CreateKey)),
-                        for_did: self.for_did.to_string(),
-                        for_verkey: self.for_verkey.to_string(),
-                    })
-                ),
-        };
+        let message = A2AMessage::Version2(
+            A2AMessageV2::CreateKey(CreateKey {
+                msg_type: MessageTypes::MessageTypeV2(MessageTypes::build_v2(A2AMessageKinds::CreateKey)),
+                for_did: self.for_did.to_string(),
+                for_verkey: self.for_verkey.to_string(),
+            })
+        );
 
         let agency_did = settings::get_config_value(settings::CONFIG_REMOTE_TO_SDK_DID)?;
 
-        prepare_message_for_agency(&message, &agency_did, &self.version)
+        prepare_message_for_agency(&message, &agency_did)
     }
 
     fn parse_response(&self, response: &Vec<u8>) -> VcxResult<(String, String)> {
-        let mut response = parse_response_from_agency(response, &self.version)?;
+        let mut response = parse_response_from_agency(response)?;
         match response.remove(0) {
             A2AMessage::Version2(A2AMessageV2::CreateKeyResponse(res)) => Ok((res.for_did, res.for_verkey)),
             _ => Err(VcxError::from(VcxErrorKind::InvalidHttpResponse))
