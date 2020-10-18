@@ -50,6 +50,7 @@ pub mod aries;
 mod proof_utils;
 mod disclosed_proof_utils;
 mod filters;
+mod indyvc;
 
 #[allow(unused_imports)]
 #[allow(dead_code)]

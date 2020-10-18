@@ -2,7 +2,6 @@ use std::convert::TryInto;
 
 use ::{connection, settings};
 use error::prelude::*;
-use messages::proofs::proof_message::ProofMessage;
 use utils::libindy::anoncreds;
 use aries::handlers::proof_presentation::prover::messages::ProverMessages;
 use aries::messages::a2a::A2AMessage;

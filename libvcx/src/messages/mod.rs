@@ -14,7 +14,6 @@ use self::agent_utils::{ComMethodUpdated, Connect, ConnectResponse, CreateAgent,
 use self::create_key::{CreateKey, CreateKeyBuilder, CreateKeyResponse};
 use self::get_message::{GetMessages, GetMessagesBuilder, GetMessagesResponse, MessagesByConnections};
 use self::message_type::*;
-use self::proofs::proof_request::ProofRequestMessage;
 use self::update_connection::{DeleteConnectionBuilder, UpdateConnection, UpdateConnectionResponse};
 use self::update_message::{UpdateMessageStatusByConnections, UpdateMessageStatusByConnectionsResponse};
 use self::update_profile::{UpdateConfigs, UpdateConfigsResponse, UpdateProfileDataBuilder};
@@ -23,7 +22,6 @@ pub mod create_key;
 pub mod validation;
 pub mod get_message;
 pub mod update_profile;
-pub mod proofs;
 pub mod agent_utils;
 pub mod update_connection;
 pub mod update_message;
@@ -754,8 +752,6 @@ pub fn delete_connection() -> DeleteConnectionBuilder { DeleteConnectionBuilder:
 pub fn update_data() -> UpdateProfileDataBuilder { UpdateProfileDataBuilder::create() }
 
 pub fn get_messages() -> GetMessagesBuilder { GetMessagesBuilder::create() }
-
-pub fn proof_request() -> ProofRequestMessage { ProofRequestMessage::create() }
 
 #[cfg(test)]
 pub mod tests {
