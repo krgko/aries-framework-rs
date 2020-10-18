@@ -378,22 +378,6 @@ pub fn get_payment_method() -> String {
     get_config_value(CONFIG_PAYMENT_METHOD).unwrap_or(DEFAULT_PAYMENT_METHOD.to_string())
 }
 
-pub fn get_communication_method() -> VcxResult<String> {
-    get_config_value(COMMUNICATION_METHOD)
-}
-
-pub fn is_aries_protocol_set() -> bool {
-    let protocol_type = get_protocol_type();
-
-    protocol_type == ProtocolTypes::V2 && ARIES_COMMUNICATION_METHOD == get_communication_method().unwrap_or_default() ||
-        protocol_type == ProtocolTypes::V3 ||
-        protocol_type == ProtocolTypes::V4
-}
-
-pub fn is_strict_aries_protocol_set() -> bool {
-    get_protocol_type() == ProtocolTypes::V4
-}
-
 pub fn get_actors() -> Vec<Actors> {
     get_config_value(CONFIG_ACTORS)
         .and_then(|actors|
@@ -460,18 +444,6 @@ impl ::std::string::ToString for ProtocolTypes {
             ProtocolTypes::V4 => "4.0".to_string(),
         }
     }
-}
-
-pub fn get_protocol_type() -> ProtocolTypes {
-    ::std::env::var("CONFIG_PROTOCOL_TYPE")
-        .unwrap_or_else(|_e| {
-            warn!("Env variable CONFIG_PROTOCOL_TYPE was not set.");
-            get_config_value(CONFIG_PROTOCOL_TYPE).unwrap_or_else(|_e| {
-                error!("Config CONFIG_PROTOCOL_TYPE was not set. Will use default value of 3.0");
-                "3.0".into()
-            })
-        })
-        .into()
 }
 
 pub fn clear_config() {

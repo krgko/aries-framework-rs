@@ -10,8 +10,7 @@ use utils::httpclient::AgencyMock;
 pub struct UpdateProfileDataBuilder {
     to_did: String,
     agent_payload: String,
-    configs: Vec<ConfigOption>,
-    version: settings::ProtocolTypes,
+    configs: Vec<ConfigOption>
 }
 
 #[derive(Clone, Deserialize, Serialize, Debug, PartialEq)]
@@ -40,8 +39,7 @@ impl UpdateProfileDataBuilder {
         UpdateProfileDataBuilder {
             to_did: String::new(),
             configs: Vec::new(),
-            agent_payload: String::new(),
-            version: settings::get_protocol_type(),
+            agent_payload: String::new()
         }
     }
 
@@ -80,15 +78,6 @@ impl UpdateProfileDataBuilder {
         };
         Ok(self)
     }
-
-    pub fn version(&mut self, version: &Option<settings::ProtocolTypes>) -> VcxResult<&mut Self> {
-        self.version = match version {
-            Some(version) => version.clone(),
-            None => settings::get_protocol_type()
-        };
-        Ok(self)
-    }
-
 
     pub fn send_secure(&mut self) -> VcxResult<()> {
         trace!("UpdateProfileData::send_secure >>>");

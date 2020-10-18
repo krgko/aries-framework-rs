@@ -61,7 +61,6 @@ pub struct DeleteConnectionBuilder {
     status_code: ConnectionStatus,
     agent_did: String,
     agent_vk: String,
-    version: settings::ProtocolTypes,
 }
 
 impl DeleteConnectionBuilder {
@@ -73,17 +72,8 @@ impl DeleteConnectionBuilder {
             to_vk: String::new(),
             status_code: ConnectionStatus::Deleted,
             agent_did: String::new(),
-            agent_vk: String::new(),
-            version: settings::get_protocol_type(),
+            agent_vk: String::new()
         }
-    }
-
-    pub fn version(&mut self, version: &Option<settings::ProtocolTypes>) -> VcxResult<&mut Self> {
-        self.version = match version {
-            Some(version) => version.clone(),
-            None => settings::get_protocol_type()
-        };
-        Ok(self)
     }
 
     pub fn send_secure(&mut self) -> VcxResult<()> {

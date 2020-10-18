@@ -1,4 +1,4 @@
-use connection::{get_agent_did, get_agent_verkey, get_pw_did, get_pw_verkey, get_their_pw_did, get_their_pw_verkey, get_version};
+use connection::{get_agent_did, get_agent_verkey, get_pw_did, get_pw_verkey, get_their_pw_did, get_their_pw_verkey};
 use error::{VcxError, VcxErrorKind, VcxResult};
 use settings;
 use settings::{CONFIG_AGENCY_DID, CONFIG_AGENCY_VERKEY, CONFIG_REMOTE_TO_SDK_DID, CONFIG_REMOTE_TO_SDK_VERKEY, get_config_value, ProtocolTypes};
@@ -52,8 +52,6 @@ impl MyAgentInfo {
 
     pub fn pw_agent_vk(&self) -> VcxResult<String> { self.retrieve(&self.pw_agent_vk, get_agent_verkey) }
 
-    pub fn version(&self) -> VcxResult<Option<ProtocolTypes>> { get_version(self.connection_handle()?) }
-
     pub fn pw_info(&mut self, handle: u32) -> VcxResult<MyAgentInfo> {
         self.my_pw_did = Some(get_pw_did(handle)?);
         self.my_pw_vk = Some(get_pw_verkey(handle)?);
@@ -61,7 +59,6 @@ impl MyAgentInfo {
         self.their_pw_vk = Some(get_their_pw_verkey(handle)?);
         self.pw_agent_did = Some(get_agent_did(handle)?);
         self.pw_agent_vk = Some(get_agent_verkey(handle)?);
-        self.version = get_version(handle)?;
         self.connection_handle = Some(handle);
         self.log();
 

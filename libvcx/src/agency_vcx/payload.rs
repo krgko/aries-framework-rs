@@ -1,10 +1,9 @@
 use serde_json::Value;
 
-use error::{VcxError, VcxErrorKind, VcxResult};
 use agency_vcx::get_message::MessagePayload;
 use agency_vcx::message_type::*;
 use agency_vcx::thread::Thread;
-use settings::{get_protocol_type, ProtocolTypes};
+use error::{VcxError, VcxErrorKind, VcxResult};
 use utils::libindy::crypto;
 
 #[derive(Clone, Deserialize, Serialize, Debug, PartialEq)]
@@ -40,33 +39,26 @@ impl Payloads {
     // Possibly this function moves out of this file.
     // On second thought, this should stick as a ConnectionError.
     pub fn encrypt(my_vk: &str, their_vk: &str, data: &str, msg_type: PayloadKinds, thread: Option<Thread>) -> VcxResult<Vec<u8>> {
-        match ProtocolTypes::from(get_protocol_type().to_string()) {
-            ProtocolTypes::V1 |
-            ProtocolTypes::V2 |
-            ProtocolTypes::V3 |
-            ProtocolTypes::V4 => {
-                let thread = thread.ok_or(VcxError::from_msg(VcxErrorKind::InvalidState, "Thread info not found"))?;
+        let thread = thread.ok_or(VcxError::from_msg(VcxErrorKind::InvalidState, "Thread info not found"))?;
 
-                let payload = PayloadV2 {
-                    type_: PayloadTypes::build_v2(msg_type),
-                    id: String::new(),
-                    msg: data.to_string(),
-                    thread,
-                };
+        let payload = PayloadV2 {
+            type_: PayloadTypes::build_v2(msg_type),
+            id: String::new(),
+            msg: data.to_string(),
+            thread,
+        };
 
-                let message = ::serde_json::to_string(&payload)
-                    .map_err(|err| {
-                        error!("could not serialize create_keys msg: {}", err);
-                        VcxError::from_msg(VcxErrorKind::SerializationError, format!("Cannot serialize payload: {}", err))
-                    })?;
+        let message = ::serde_json::to_string(&payload)
+            .map_err(|err| {
+                error!("could not serialize create_keys msg: {}", err);
+                VcxError::from_msg(VcxErrorKind::SerializationError, format!("Cannot serialize payload: {}", err))
+            })?;
 
-                let receiver_keys = ::serde_json::to_string(&vec![&their_vk])
-                    .map_err(|err| VcxError::from_msg(VcxErrorKind::SerializationError, format!("Cannot serialize receiver keys: {}", err)))?;
+        let receiver_keys = ::serde_json::to_string(&vec![&their_vk])
+            .map_err(|err| VcxError::from_msg(VcxErrorKind::SerializationError, format!("Cannot serialize receiver keys: {}", err)))?;
 
-                trace!("Sending payload: {:?}", message.as_bytes());
-                crypto::pack_message(Some(my_vk), &receiver_keys, message.as_bytes())
-            }
-        }
+        trace!("Sending payload: {:?}", message.as_bytes());
+        crypto::pack_message(Some(my_vk), &receiver_keys, message.as_bytes())
     }
 
     pub fn decrypt(my_vk: &str, payload: &MessagePayload) -> VcxResult<(String, Option<Thread>)> {
@@ -142,30 +134,14 @@ impl PayloadKinds {
         }
     }
 
-    pub fn name<'a>(&'a self) -> &'a str {
-        match get_protocol_type() {
-            ProtocolTypes::V1 => {
-                match self {
-                    PayloadKinds::CredOffer => "CRED_OFFER",
-                    PayloadKinds::CredReq => "CRED_REQ",
-                    PayloadKinds::Cred => "CRED",
-                    PayloadKinds::ProofRequest => "PROOF_REQUEST",
-                    PayloadKinds::Proof => "PROOF",
-                    PayloadKinds::Other(kind) => kind,
-                }
-            }
-            ProtocolTypes::V2 |
-            ProtocolTypes::V3 |
-            ProtocolTypes::V4 => {
-                match self {
-                    PayloadKinds::CredOffer => "credential-offer",
-                    PayloadKinds::CredReq => "credential-request",
-                    PayloadKinds::Cred => "credential",
-                    PayloadKinds::ProofRequest => "presentation-request",
-                    PayloadKinds::Proof => "presentation",
-                    PayloadKinds::Other(kind) => kind,
-                }
-            }
+    pub fn name(&self) -> &str {
+        match self {
+            PayloadKinds::CredOffer => "credential-offer",
+            PayloadKinds::CredReq => "credential-request",
+            PayloadKinds::Cred => "credential",
+            PayloadKinds::ProofRequest => "presentation-request",
+            PayloadKinds::Proof => "presentation",
+            PayloadKinds::Other(kind) => kind,
         }
     }
 }

@@ -33,8 +33,7 @@ pub struct UIDsByConn {
 
 struct UpdateMessageStatusByConnectionsBuilder {
     status_code: Option<MessageStatusCode>,
-    uids_by_conns: Vec<UIDsByConn>,
-    version: settings::ProtocolTypes,
+    uids_by_conns: Vec<UIDsByConn>
 }
 
 impl UpdateMessageStatusByConnectionsBuilder {
@@ -44,7 +43,6 @@ impl UpdateMessageStatusByConnectionsBuilder {
         UpdateMessageStatusByConnectionsBuilder {
             status_code: None,
             uids_by_conns: Vec::new(),
-            version: settings::get_protocol_type(),
         }
     }
 
@@ -57,15 +55,6 @@ impl UpdateMessageStatusByConnectionsBuilder {
     pub fn status_code(&mut self, code: MessageStatusCode) -> VcxResult<&mut Self> {
         //Todo: validate that it can be parsed to number??
         self.status_code = Some(code.clone());
-        Ok(self)
-    }
-
-    #[allow(dead_code)]
-    pub fn version(&mut self, version: &Option<settings::ProtocolTypes>) -> VcxResult<&mut Self> {
-        self.version = match version {
-            Some(version) => version.clone(),
-            None => settings::get_protocol_type()
-        };
         Ok(self)
     }
 

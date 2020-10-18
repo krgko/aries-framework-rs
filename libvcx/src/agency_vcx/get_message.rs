@@ -72,7 +72,6 @@ pub struct GetMessagesBuilder {
     uids: Option<Vec<String>>,
     status_codes: Option<Vec<MessageStatusCode>>,
     pairwise_dids: Option<Vec<String>>,
-    version: ProtocolTypes,
 }
 
 impl GetMessagesBuilder {
@@ -87,8 +86,7 @@ impl GetMessagesBuilder {
             uids: None,
             exclude_payload: None,
             status_codes: None,
-            pairwise_dids: None,
-            version: settings::get_protocol_type(),
+            pairwise_dids: None
         }
     }
 
@@ -119,14 +117,6 @@ impl GetMessagesBuilder {
     pub fn include_edge_payload(&mut self, payload: &str) -> VcxResult<&mut Self> {
         //todo: is this a json value, String??
         self.exclude_payload = Some(payload.to_string());
-        Ok(self)
-    }
-
-    pub fn version(&mut self, version: &Option<ProtocolTypes>) -> VcxResult<&mut Self> {
-        self.version = match version {
-            Some(version) => version.clone(),
-            None => settings::get_protocol_type()
-        };
         Ok(self)
     }
 
@@ -220,7 +210,7 @@ impl GeneralMessage for GetMessagesBuilder {
     fn set_agent_vk(&mut self, vk: String) { self.agent_vk = vk; }
 
     fn prepare_request(&mut self) -> VcxResult<Vec<u8>> {
-        debug!("prepare_request >> This connection is using protocol_type: {:?}", self.version);
+        debug!("prepare_request >>");
         let message = A2AMessage::Version2(
             A2AMessageV2::GetMessages(
                 GetMessages::build(A2AMessageKinds::GetMessages,
@@ -339,7 +329,6 @@ pub fn get_connection_messages(pw_did: &str, pw_vk: &str, agent_did: &str, agent
         .agent_vk(&agent_vk)?
         .uid(msg_uid)?
         .status_codes(status_codes)?
-        .version(version)?
         .send_secure()
         .map_err(|err| err.map(VcxErrorKind::PostMessageFailed, "Cannot get messages"))?;
 
@@ -399,7 +388,6 @@ pub fn download_messages(pairwise_dids: Option<Vec<String>>, status_codes: Optio
             .uid(uids)?
             .status_codes(status_codes)?
             .pairwise_dids(pairwise_dids)?
-            .version(&Some(::settings::get_protocol_type()))?
             .download_messages()?;
 
     trace!("message returned: {:?}", response);

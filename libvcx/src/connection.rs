@@ -26,7 +26,6 @@ pub fn create_agent_keys(source_id: &str, pw_did: &str, pw_verkey: &str) -> VcxR
     let (agent_did, agent_verkey) = agency_vcx::create_keys()
         .for_did(pw_did)?
         .for_verkey(pw_verkey)?
-        .version(&Some(settings::get_protocol_type()))?
         .send_secure()
         .map_err(|err| err.extend("Cannot create pairwise keys"))?;
 
@@ -65,10 +64,6 @@ pub fn get_agent_verkey(handle: u32) -> VcxResult<String> {
     CONNECTION_MAP.get(handle, |connection| {
         Ok(connection.agent_info().agent_vk.clone())
     })
-}
-
-pub fn get_version(_handle: u32) -> VcxResult<Option<ProtocolTypes>> {
-    Ok(Some(settings::get_protocol_type()))
 }
 
 pub fn get_pw_verkey(handle: u32) -> VcxResult<String> {

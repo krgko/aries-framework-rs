@@ -30,8 +30,7 @@ pub struct CreateKeyResponse {
 #[derive(Debug)]
 pub struct CreateKeyBuilder {
     for_did: String,
-    for_verkey: String,
-    version: ProtocolTypes,
+    for_verkey: String
 }
 
 impl CreateKeyBuilder {
@@ -40,8 +39,7 @@ impl CreateKeyBuilder {
 
         CreateKeyBuilder {
             for_did: String::new(),
-            for_verkey: String::new(),
-            version: settings::get_protocol_type(),
+            for_verkey: String::new()
         }
     }
 
@@ -54,14 +52,6 @@ impl CreateKeyBuilder {
     pub fn for_verkey(&mut self, verkey: &str) -> VcxResult<&mut Self> {
         validation::validate_verkey(verkey)?;
         self.for_verkey = verkey.to_string();
-        Ok(self)
-    }
-
-    pub fn version(&mut self, version: &Option<ProtocolTypes>) -> VcxResult<&mut Self> {
-        self.version = match version {
-            Some(version) => version.clone(),
-            None => settings::get_protocol_type()
-        };
         Ok(self)
     }
 
